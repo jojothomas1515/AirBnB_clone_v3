@@ -5,7 +5,7 @@ Contains the class DBStorage
 
 import models
 from models.amenity import Amenity
-from models.base_model import BaseModel, Base
+from models.base_model import Base
 from models.city import City
 from models.place import Place
 from models.review import Review
@@ -13,7 +13,7 @@ from models.state import State
 from models.user import User
 from os import getenv
 import sqlalchemy
-from sqlalchemy import create_engine
+from sqlalchemy import create_engine, func
 from sqlalchemy.orm import scoped_session, sessionmaker
 
 classes = {"Amenity": Amenity, "City": City,
@@ -66,7 +66,8 @@ class DBStorage:
 
     def reload(self):
         """reloads data from the database"""
-        Base.metadata.create_all(self.__engine)
+        Base.metadata.create_all(self.__engine, tables=[
+            cls.__table__ for cls in classes.values()])
         sess_factory = sessionmaker(bind=self.__engine, expire_on_commit=False)
         Session = scoped_session(sess_factory)
         self.__session = Session
@@ -74,3 +75,38 @@ class DBStorage:
     def close(self):
         """call remove() method on the private session attribute"""
         self.__session.remove()
+
+    def get(self, cls, id):
+        """
+        Retrieves an object by class name and id from storage
+
+        Args:
+        cls: class name / db table name
+        id: id of the object to retrieve
+
+        Returns:
+        object: if the object is found else return None
+        """
+        obj = self.__session.query(cls).filter(cls.id == id).first()
+        if not obj:
+            return None
+        return obj
+
+    def count(self, cls=None):
+        """
+        Counts the total number of objects in storage
+
+        Args:
+        cls (optional): the class / table to count
+
+        Returns:
+        total number of objects in storage
+        """
+        if cls is None:
+            return sum(
+                [
+                    self.__session.query(func.count(cls.id)).scalar()
+                    for cls in classes.values()
+                ]
+            )
+        return self.__session.query(func.count(cls.id)).scalar()

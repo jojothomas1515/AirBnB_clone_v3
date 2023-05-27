@@ -84,7 +84,7 @@ def states(state_id: str = None):
 
                 state.save()
                 return jsonify(state.to_dict()), 200
-        except Exception as e:
+        except Exception:
             # will throw an exception if the data passed is not a valid
             # json object
             return jsonify(error="Not a JSON"), 400

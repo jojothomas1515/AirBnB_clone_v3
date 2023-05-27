@@ -80,7 +80,7 @@ class FileStorage:
         Returns:
         object: if the object is found else return None
         """
-        key = obj.__class__.__name__ + "." + obj.id
+        key = cls.__name__ + "." + id
         obj = self.__objects.get(key)
         if not obj:
             return None
@@ -96,4 +96,7 @@ class FileStorage:
         Returns:
         total number of objects in storage
         """
-        return len(self.__objects.values())
+        if not cls:
+            return len(self.__objects.values())
+        all_cls = [key for key in self.__objects.keys() if cls.__name__ in key]
+        return len(all_cls)

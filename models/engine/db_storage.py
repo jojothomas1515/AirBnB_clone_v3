@@ -40,9 +40,6 @@ class DBStorage:
         if HBNB_ENV == "test":
             Base.metadata.drop_all(self.__engine)
 
-        Base.metadata.create_all(bind=self.__engine, tables=[
-                                 cls.__table__ for cls in classes.values()])
-
     def all(self, cls=None):
         """query on the current database session"""
         new_dict = {}
@@ -69,7 +66,8 @@ class DBStorage:
 
     def reload(self):
         """reloads data from the database"""
-        Base.metadata.create_all(self.__engine)
+        Base.metadata.create_all(self.__engine, tables=[
+            cls.__table__ for cls in classes.values()])
         sess_factory = sessionmaker(bind=self.__engine, expire_on_commit=False)
         Session = scoped_session(sess_factory)
         self.__session = Session

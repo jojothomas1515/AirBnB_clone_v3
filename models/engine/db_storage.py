@@ -40,6 +40,9 @@ class DBStorage:
         if HBNB_ENV == "test":
             Base.metadata.drop_all(self.__engine)
 
+        Base.metadata.create_all(bind=self.__engine, tables=[
+                                 cls.__table__ for cls in classes.values()])
+
     def all(self, cls=None):
         """query on the current database session"""
         new_dict = {}
@@ -74,3 +77,19 @@ class DBStorage:
     def close(self):
         """call remove() method on the private session attribute"""
         self.__session.remove()
+
+    def get(self, cls, id):
+        """
+        Retrieves an object by class name and id from storage
+
+        Args:
+        cls: class name / db table name
+        id: id of the object to retrieve
+
+        Returns:
+        object: if the object is found else return None
+        """
+        obj = self.__session.query(cls).filter(cls.id == id).first()
+        if not obj:
+            return None
+        return obj

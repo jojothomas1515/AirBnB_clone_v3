@@ -70,6 +70,15 @@ test_db_storage.py'])
 
 class TestFileStorage(unittest.TestCase):
     """Test the FileStorage class"""
+
+    @classmethod
+    def setUpClass(cls):
+        """Set up States object for testing."""
+        cls.state = State(name="Edo State")
+        cls.city = City(name="Benin City", state_id=cls.state.id)
+        cls.state.save()
+        cls.city.save()
+
     @unittest.skipIf(models.storage_t != 'db', "not testing db storage")
     def test_all_returns_dict(self):
         """Test that all returns a dictionaty"""
@@ -86,3 +95,25 @@ class TestFileStorage(unittest.TestCase):
     @unittest.skipIf(models.storage_t != 'db', "not testing db storage")
     def test_save(self):
         """Test that save properly saves objects to file.json"""
+
+    @unittest.skipIf(models.storage_t != 'db', "not testing db storage")
+    def test_get(self):
+        """Test that get method works properly."""
+        state = models.storage.get(State, self.state.id)
+        self.assertEqual(state.id, self.state.id)
+        self.assertIs(state, self.state)
+
+        city = models.storage.get(City, self.city.id)
+        self.assertEqual(city.id, self.city.id)
+        self.assertIs(city, self.city)
+
+    @unittest.skipIf(models.storage_t != 'db', "not testing db storage")
+    def test_count(self):
+        """Testing is the count of item in the database is accurate."""
+        self.assertEqual(
+            models.storage.count(),
+            2)
+        self.assertEqual(
+            models.storage.count(State), 1)
+        self.assertEqual(
+            models.storage.count(City), 1)

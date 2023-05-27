@@ -1,6 +1,6 @@
 *.pyc
 .vscode
-__pycache__
+*__pycache__/
 .env
 file.json
 test.py

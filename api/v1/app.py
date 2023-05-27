@@ -2,7 +2,7 @@
 
 """Api views."""
 
-from flask import Flask
+from flask import Flask, jsonify
 from models import storage
 from api.v1.views import app_views
 
@@ -16,6 +16,12 @@ def teardown_session(exception):
     """Close database session."""
     storage.close()
 
+@app.errorhandler(404)
+def not_found_error(error):
+    """Error Handler for not found errors."""
+    response = jsonify({"error": "Not found"})
+    response.status = 404
+    return response
 
 if __name__ == '__main__':
     from os import getenv

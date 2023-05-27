@@ -113,3 +113,52 @@ class TestFileStorage(unittest.TestCase):
         with open("file.json", "r") as f:
             js = f.read()
         self.assertEqual(json.loads(string), json.loads(js))
+
+
+class FileStorageTestsNew(unittest.TestCase):
+    """Test file storage new methods."""
+
+    @classmethod
+    def setUpClass(cls):
+        """Set up States object for testing."""
+        if os.path.isfile('file.json'):
+            import shutil
+            shutil.move('file.json', 'file.json.bk')
+            FileStorage._FileStorage__objects = {}
+        models.storage.reload()
+        cls.state = State(name="Edo State")
+        cls.city = City(name="Benin City", state_id=cls.state.id)
+        cls.state.save()
+        cls.city.save()
+
+    @classmethod
+    def tearDownClass(cls):
+        if os.path.isfile('file.json') and os.path.isfile('file.json.bk'):
+            import shutil
+            shutil.move('file.json.bk', 'file.json')
+        else:
+            os.remove('file.json')
+        FileStorage._FileStorage__objects = {}
+        models.storage.reload()
+
+    @unittest.skipIf(models.storage_t == 'db', "not testing file storage")
+    def test_get(self):
+        """Test that get method works properly."""
+        state = models.storage.get(State, self.state.id)
+        self.assertEqual(state.id, self.state.id)
+        self.assertIs(state, self.state)
+
+        city = models.storage.get(City, self.city.id)
+        self.assertEqual(city.id, self.city.id)
+        self.assertIs(city, self.city)
+
+    @unittest.skipIf(models.storage_t == 'db', "not testing file storage")
+    def test_count(self):
+        """Testing is the count of item in the database is accurate."""
+        self.assertEqual(
+            models.storage.count(),
+            2)
+        self.assertEqual(
+            models.storage.count(State), 1)
+        self.assertEqual(
+            models.storage.count(City), 1)

@@ -20,7 +20,8 @@ classes = {"Amenity": Amenity, "City": City,
            "Place": Place, "Review": Review, "State": State, "User": User}
 
 
-class DBStorage:
+class
+DBStorage:
     """interaacts with the MySQL database"""
     __engine = None
     __session = None
@@ -66,7 +67,8 @@ class DBStorage:
 
     def reload(self):
         """reloads data from the database"""
-        Base.metadata.create_all(self.__engine)
+        Base.metadata.create_all(self.__engine, tables=[
+            cls.__table__ for cls in classes.values()])
         sess_factory = sessionmaker(bind=self.__engine, expire_on_commit=False)
         Session = scoped_session(sess_factory)
         self.__session = Session

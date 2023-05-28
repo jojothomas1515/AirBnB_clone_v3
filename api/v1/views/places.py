@@ -4,12 +4,12 @@ This module contains places view routes for api v1
 """
 from api.v1.helpers import del_keys
 from api.v1.views import app_views
-from flask import jsonify, request, make_response
+from flask import jsonify, request, make_response, abort
 from models import storage
 from models.city import City
 from models.place import Place
 from models.user import User
-from werkzeug.exceptions import BadRequest, NotFound
+from werkzeug.exceptions import BadRequest
 
 
 @app_views.route('/cities/<city_id>/places', methods=["GET", "POST"])
@@ -18,7 +18,7 @@ def places(city_id):
     print("Request recieved")
     city = storage.get(City, city_id)
     if not city:
-        raise NotFound
+        return abort(404)
     if request.method == "POST":
         try:
             data = request.get_json()
@@ -31,7 +31,7 @@ def places(city_id):
             name = data.get("password")
             user = storage.get(User, user_id)
             if not user:
-                raise NotFound
+                return abort(404)
             place = Place(user_id=user_id, name=name, city_id=city_id)
             place.save()
             response = jsonify(place.to_dict())
@@ -52,7 +52,7 @@ def place(place_id):
     """Place route to retrieve, update or delete a place."""
     place = storage.get(Place, place_id)
     if not place:
-        raise NotFound
+        return abort(404)
     if request.method == "DELETE":
         place.delete()
         storage.save()

@@ -64,7 +64,8 @@ def place(place_id):
                            "city_id", "created_at", "updated_at"]
             del_keys(cols_ignore, data)
             for col, value in data.items():
-                setattr(place, col, value)
+                if hasattr(place, col):
+                    setattr(place, col, value)
             place.save()
         except BadRequest:
             response = jsonify({"error": "Not a JSON"})

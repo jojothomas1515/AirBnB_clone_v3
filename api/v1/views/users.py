@@ -42,7 +42,7 @@ def user(user_id):
     """User route to retrieve, update or delete a user."""
     user = storage.get(User, user_id)
     if not user:
-            raise NotFound
+        raise NotFound
     if request.method == "DELETE":
         user.delete()
         storage.save()
@@ -55,7 +55,7 @@ def user(user_id):
             for col, value in data.items():
                 if hasattr(user, col):
                     setattr(user, col, value)
-            user.save()   
+            user.save()
         except BadRequest:
             response = jsonify({"error": "Not a JSON"})
             return make_response(response, 400)

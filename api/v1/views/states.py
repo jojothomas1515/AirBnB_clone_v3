@@ -87,4 +87,4 @@ def states(state_id: str = None):
         except Exception:
             # will throw an exception if the data passed is not a valid
             # json object
-            return jsonify(message"Not a JSON"), 400
+            return jsonify(message="Not a JSON"), 400

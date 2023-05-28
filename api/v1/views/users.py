@@ -53,7 +53,8 @@ def user(user_id):
             cols_ignore = ["id", "email", "created_at", "updated_at"]
             del_keys(cols_ignore, data)
             for col, value in data.items():
-                setattr(user, col, value)
+                if hasattr(user, col):
+                    setattr(user, col, value)
             user.save()   
         except BadRequest:
             response = jsonify({"error": "Not a JSON"})

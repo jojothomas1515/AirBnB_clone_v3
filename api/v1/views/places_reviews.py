@@ -64,7 +64,8 @@ def review(review_id):
                            "place_id", "created_at", "updated_at"]
             del_keys(cols_ignore, data)
             for col, value in data.items():
-                setattr(review, col, value)
+                if hasattr(review, col):
+                    setattr(review, col, value)
             review.save()
         except BadRequest:
             response = jsonify({"error": "Not a JSON"})

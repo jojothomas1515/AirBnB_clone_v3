@@ -65,7 +65,7 @@ def states(state_id: str = None):
         except Exception:
             # will throw an exception if the data passed is not a valid
             # json object
-            return jsonify(error="Not a JSON"), 400
+            return jsonify(message="Not a JSON"), 400
 
     elif request.method == "PUT":
         ignore = ['id', 'created_at', 'updated_at']
@@ -87,4 +87,4 @@ def states(state_id: str = None):
         except Exception:
             # will throw an exception if the data passed is not a valid
             # json object
-            return jsonify(error="Not a JSON"), 400
+            return jsonify(message"Not a JSON"), 400

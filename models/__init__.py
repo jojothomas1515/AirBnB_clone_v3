@@ -3,7 +3,10 @@
 initialize the models package
 """
 
+from load_env import load_env_file
 from os import getenv
+
+load_env_file()
 
 storage_t = getenv("HBNB_TYPE_STORAGE")
 

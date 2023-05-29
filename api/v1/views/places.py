@@ -14,7 +14,16 @@ from werkzeug.exceptions import BadRequest
 
 @app_views.route('/cities/<city_id>/places', methods=["GET", "POST"])
 def places(city_id):
-    """Place routes for getting all places and creating a new one"""
+    """
+    Place routes for getting all places and creating a new one
+
+    Methods:
+    Accepts GET and POST method
+
+    Args:
+    city_id: The id of the city to create the place under.
+    for post request
+    """
     print("Request recieved")
     city = storage.get(City, city_id)
     if not city:
@@ -49,7 +58,15 @@ def places(city_id):
 
 @app_views.route("/places/<place_id>", methods=["GET", "PUT", "DELETE"])
 def place(place_id):
-    """Place route to retrieve, update or delete a place."""
+    """
+    Place route to retrieve, update or delete a place.
+
+    Methods:
+        Accepts GET, PUT and DELETE requests
+
+    Args:
+        place_id: The ID of the place to retrieve, update or delete
+    """
     place = storage.get(Place, place_id)
     if not place:
         return abort(404)

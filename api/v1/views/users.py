@@ -4,10 +4,9 @@ This module contains users view routes for api v1
 """
 from api.v1.helpers import del_keys
 from api.v1.views import app_views
-from flask import jsonify, request, make_response
+from flask import jsonify, request, make_response, abort
 from models import storage
 from models.user import User
-from werkzeug.exceptions import NotFound
 
 
 @app_views.route('/users', methods=["GET", "POST"])
@@ -41,7 +40,7 @@ def user(user_id):
     """User route to retrieve, update or delete a user."""
     user = storage.get(User, user_id)
     if not user:
-        raise NotFound
+        abort(404)
     if request.method == "DELETE":
         user.delete()
         storage.save()

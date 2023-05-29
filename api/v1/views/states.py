@@ -109,18 +109,17 @@ def update_state(state_id: str):
     """
     ignore = ['id', 'created_at', 'updated_at']
     try:
-        else:
-            data = request.get_json()
-            state = storage.get(State, state_id)
-            if not state:
-                abort(404)
-            for k, v in data.items():
-                if k in ignore:
-                    continue
-                setattr(state, k, v)
+        data = request.get_json()
+        state = storage.get(State, state_id)
+        if not state:
+            abort(404)
+        for k, v in data.items():
+            if k in ignore:
+                continue
+            setattr(state, k, v)
 
-            state.save()
-            return jsonify(state.to_dict()), 200
+        state.save()
+        return jsonify(state.to_dict()), 200
     except Exception:
         # will throw an exception if the data passed is not a valid
         # json object

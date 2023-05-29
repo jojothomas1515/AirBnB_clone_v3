@@ -6,6 +6,7 @@ from api.v1.views import app_views
 from flask import jsonify, request, abort
 from models import storage
 from models.state import State
+from werkzeug.exceptions import BadRequest
 
 
 @app_views.route("/states", strict_slashes=False, methods=["GET"])
@@ -44,7 +45,7 @@ def create_state():
             new_state = State(**new_state)
             new_state.save()
             return jsonify(new_state.to_dict()), 201
-    except Exception:
+    except BadRequest:
         # will throw an exception if the data passed is not a valid
         # json object
         abort(400, "Not a JSON")
@@ -120,7 +121,7 @@ def update_state(state_id: str):
 
         state.save()
         return jsonify(state.to_dict()), 200
-    except Exception:
+    except BadRequest:
         # will throw an exception if the data passed is not a valid
         # json object
         abort(400, "Not a JSON")

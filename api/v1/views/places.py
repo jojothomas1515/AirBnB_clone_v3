@@ -9,7 +9,6 @@ from models import storage
 from models.city import City
 from models.place import Place
 from models.user import User
-from werkzeug.exceptions import BadRequest
 
 
 @app_views.route('/cities/<city_id>/places',
@@ -28,7 +27,7 @@ def places(city_id):
     print("Request recieved")
     city = storage.get(City, city_id)
     if not city:
-        return abort(404)
+        abort(404)
     if request.method == "POST":
         data = request.get_json(silent=True)
         if not data:
@@ -69,7 +68,7 @@ def place(place_id):
     """
     place = storage.get(Place, place_id)
     if not place:
-        return abort(404)
+        abort(404)
     if request.method == "DELETE":
         place.delete()
         storage.save()

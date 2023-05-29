@@ -46,7 +46,7 @@ def create_state():
     return jsonify(new_state.to_dict()), 201
 
 
-@app_views.route("/states/<string:state_id>", strict_slashes=False,
+@app_views.route("/states/<state_id>", strict_slashes=False,
                  methods=["GET"])
 def state(state_id: str):
     """State routes.
@@ -61,13 +61,12 @@ def state(state_id: str):
         state_id: id of the states resource
     """
     state = storage.get(State, state_id)
-    if state:
-        return jsonify(state.to_dict()), 200
-    else:
+    if state is None:
         abort(404)
+    return jsonify(state.to_dict()), 200
 
 
-@app_views.route("/states/<string:state_id>", strict_slashes=False,
+@app_views.route("/states/<state_id>", strict_slashes=False,
                  methods=["DELETE"])
 def delete_state(state_id: str):
     """State routes.
@@ -89,7 +88,7 @@ def delete_state(state_id: str):
     return jsonify({}), 200
 
 
-@app_views.route("/states/<string:state_id>", strict_slashes=False,
+@app_views.route("/states/<state_id>", strict_slashes=False,
                  methods=["PUT"])
 def update_state(state_id: str):
     """State routes.

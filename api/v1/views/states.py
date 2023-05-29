@@ -6,7 +6,6 @@ from api.v1.views import app_views
 from flask import jsonify, request, abort
 from models import storage
 from models.state import State
-from werkzeug.exceptions import BadRequest
 
 
 @app_views.route("/states", strict_slashes=False, methods=["GET"])
@@ -36,19 +35,15 @@ def create_state():
     Args:
         state_id: id of the states resource
     """
-    try:
-        new_state = request.get_json()
+    new_state = request.get_json(silent=True)
 
-        if 'name' not in new_state:
-            abort(400, "Missing name")
-        else:
-            new_state = State(**new_state)
-            new_state.save()
-            return jsonify(new_state.to_dict()), 201
-    except BadRequest:
-        # will throw an exception if the data passed is not a valid
-        # json object
-        abort(400, "Not a JSON")
+    if 'name' not in new_state:
+        return jsonify({"error": "Missing name"}), 400
+    if new_state is None:
+        return jsonify({"error": "Not a JSON"}), 400
+    new_state = State(**new_state)
+    new_state.save()
+    return jsonify(new_state.to_dict()), 201
 
 
 @app_views.route("/states/<string:state_id>", strict_slashes=False,
@@ -109,19 +104,15 @@ def update_state(state_id: str):
         state_id: id of the states resource
     """
     ignore = ['id', 'created_at', 'updated_at']
-    try:
-        data = request.get_json()
-        state = storage.get(State, state_id)
-        if not state:
-            abort(404)
-        for k, v in data.items():
-            if k in ignore:
-                continue
-            setattr(state, k, v)
-
-        state.save()
-        return jsonify(state.to_dict()), 200
-    except BadRequest:
-        # will throw an exception if the data passed is not a valid
-        # json object
-        abort(400, "Not a JSON")
+    state = storage.get(State, state_id)
+    if state is None:
+        abort(404)
+    data = request.get_json(silent=True)
+    if data is None:
+        return jsonify({"error": "Not a JSON"}), 400
+    for k, v in data.items():
+        if k in ignore:
+            continue
+        setattr(state, k, v)
+    state.save()
+    return jsonify(state.to_dict()), 200

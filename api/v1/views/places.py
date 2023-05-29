@@ -12,7 +12,8 @@ from models.user import User
 from werkzeug.exceptions import BadRequest
 
 
-@app_views.route('/cities/<city_id>/places', methods=["GET", "POST"])
+@app_views.route('/cities/<city_id>/places',
+                 strict_slashes=False, methods=["GET", "POST"])
 def places(city_id):
     """
     Place routes for getting all places and creating a new one
@@ -29,26 +30,24 @@ def places(city_id):
     if not city:
         return abort(404)
     if request.method == "POST":
-        try:
-            data = request.get_json()
-            check_list = ["user_id", "name"]
-            for check in check_list:
-                if not data.get(check, None):
-                    response = jsonify({"error": "Missing {}".format(check)})
-                    return make_response(response, 404)
-            user_id = data.get("user_id")
-            name = data.get("password")
-            user = storage.get(User, user_id)
-            if not user:
-                return abort(404)
-            place = Place(user_id=user_id, name=name, city_id=city_id)
-            place.save()
-            response = jsonify(place.to_dict())
-            return make_response(response, 201)
-
-        except BadRequest:
+        data = request.get_json(silent=True)
+        if not data:
             response = jsonify({"error": "Not a JSON"})
             return make_response(response, 400)
+        check_list = ["user_id", "name"]
+        for check in check_list:
+            if not data.get(check, None):
+                response = jsonify({"error": "Missing {}".format(check)})
+                return make_response(response, 404)
+        user_id = data.get("user_id")
+        name = data.get("password")
+        user = storage.get(User, user_id)
+        if not user:
+            return abort(404)
+        place = Place(user_id=user_id, name=name, city_id=city_id)
+        place.save()
+        response = jsonify(place.to_dict())
+        return make_response(response, 201)
 
     all_places = storage.all(Place).values()
     response = jsonify([obj.to_dict()
@@ -56,7 +55,8 @@ def places(city_id):
     return make_response(response, 200)
 
 
-@app_views.route("/places/<place_id>", methods=["GET", "PUT", "DELETE"])
+@app_views.route("/places/<place_id>",
+                 strict_slashes=False, methods=["GET", "PUT", "DELETE"])
 def place(place_id):
     """
     Place route to retrieve, update or delete a place.
@@ -75,17 +75,17 @@ def place(place_id):
         storage.save()
         return make_response(jsonify({}), 200)
     elif request.method == "PUT":
-        try:
-            data = request.get_json()
-            cols_ignore = ["id", "user_id",
-                           "city_id", "created_at", "updated_at"]
-            del_keys(cols_ignore, data)
-            for col, value in data.items():
-                if hasattr(place, col):
-                    setattr(place, col, value)
-            place.save()
-        except BadRequest:
+        data = request.get_json(silent=True)
+        if not data:
             response = jsonify({"error": "Not a JSON"})
             return make_response(response, 400)
+        cols_ignore = ["id", "user_id",
+                       "city_id", "created_at", "updated_at"]
+        del_keys(cols_ignore, data)
+        for col, value in data.items():
+            if hasattr(place, col):
+                setattr(place, col, value)
+        place.save()
+
     response = jsonify(place.to_dict())
     return make_response(response, 200)

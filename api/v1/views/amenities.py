@@ -29,7 +29,6 @@ def amenities():
     return jsonify(all_amenities), 200
 
 
-
 @app_views.route("/amenities/<string:amenity_id>", strict_slashes=False,
                  methods=["GET"])
 def get_amenity(amenity_id: str):
@@ -88,7 +87,7 @@ def add_amenity():
 
     amenity = Amenity(**data)
     amenity.save()
-    return (jsonify(amenity.to_dict()), 201)
+    return jsonify(amenity.to_dict()), 201
 
 
 @app_views.route("/amenities/<string:amenity_id>", strict_slashes=False,
@@ -108,7 +107,7 @@ def update_amenity(amenity_id: str):
     if not amenity:
         abort(404)
     ignore = ['id', 'created_at', 'updated_at']
-    data = request.get_json()
+    data = request.get_json(silent=True)
     if not data:
         jsonify(error="Not a JSON"), 400
     for k, v in data.items():

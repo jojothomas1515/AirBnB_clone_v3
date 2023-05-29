@@ -44,7 +44,7 @@ def get_amenity(amenity_id: str):
     amenity = storage.get(Amenity, amenity_id)
     if not amenity:
         abort(404)
-    return (jsonify(amenity.to_dict()), 200)
+    return jsonify(amenity.to_dict()), 200
 
 
 @app_views.route("/amenities/<string:amenity_id>", strict_slashes=False,
@@ -60,11 +60,11 @@ def delete_amenity(amenity_id: str):
         amenity_id: the is the of a single amenity
     """
     amenity = storage.get(Amenity, amenity_id)
-    if not amenity:
+    if amenity is None:
         abort(404)
     amenity.delete()
     storage.save()
-    return (jsonify({}), 200)
+    return jsonify({}), 200
 
 
 @app_views.route("/amenities", strict_slashes=False, methods=["POST"])
@@ -79,7 +79,7 @@ def add_amenity():
         amenity_id: the is the of a single amenity
     """
     data = request.get_json(silent=True)
-    if not data:
+    if data is None:
         return jsonify(error="Not a JSON"), 400
 
     if 'name' not in data.keys():

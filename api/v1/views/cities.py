@@ -7,6 +7,7 @@ from flask import jsonify, request, abort
 from models import storage
 from models.city import City
 from models.state import State
+from werkzeug.exceptions import BadRequest
 
 
 @app_views.route("/cities/<string:city_id>", strict_slashes=False,
@@ -38,10 +39,9 @@ def cities(city_id: str):
         city = storage.get(City, city_id)
         if not city:
             return abort(404)
-        else:
-            city.delete()
-            storage.save()
-            return jsonify({}), 200
+        city.delete()
+        storage.save()
+        return jsonify({}), 200
 
     elif request.method == "PUT":
         ignore = ['id', 'created_at', 'updated_at']
@@ -60,7 +60,7 @@ def cities(city_id: str):
 
                 city.save()
                 return jsonify(city.to_dict()), 200
-        except Exception:
+        except BadRequest:
             return jsonify(error="Not a JSON"), 400
 
 
@@ -104,5 +104,5 @@ def state_cities(state_id: str):
             city.save()
 
             return jsonify(city.to_dict()), 201
-        except Exception:
+        except BadRequest:
             return jsonify(error="Not a JSON"), 400

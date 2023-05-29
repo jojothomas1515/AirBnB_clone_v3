@@ -39,7 +39,7 @@ def create_state():
         new_state = request.get_json()
 
         if 'name' not in new_state:
-            return jsonify({"error": "Missing name"}), 400
+            abort(400, "Missing name")
         else:
             new_state = State(**new_state)
             new_state.save()
@@ -47,7 +47,7 @@ def create_state():
     except Exception:
         # will throw an exception if the data passed is not a valid
         # json object
-        jsonify({"error": "Not a JSON"}), 400
+        abort(400, "Not a JSON")
 
 
 @app_views.route("/states/<string:state_id>", strict_slashes=False,
@@ -65,7 +65,10 @@ def state(state_id: str):
         state_id: id of the states resource
     """
     state = storage.get(State, state_id)
-    return (jsonify(state.to_dict()), 200) if state else abort(404)
+    if state:
+        return jsonify(state.to_dict()), 200
+    else:
+        abort(404)
 
 
 @app_views.route("/states/<string:state_id>", strict_slashes=False,
@@ -84,7 +87,7 @@ def delete_state(state_id: str):
     """
     state = storage.get(State, state_id)
     if not state:
-        return abort(404)
+        abort(404)
     state.delete()
     storage.save()
     return jsonify({}), 200
@@ -106,20 +109,19 @@ def update_state(state_id: str):
     """
     ignore = ['id', 'created_at', 'updated_at']
     try:
-        state = storage.get(State, state_id)
-        if not state:
-            abort(404)
         else:
             data = request.get_json()
-
+            state = storage.get(State, state_id)
+            if not state:
+                abort(404)
             for k, v in data.items():
                 if k in ignore:
                     continue
                 setattr(state, k, v)
 
-                state.save()
-                return jsonify(state.to_dict()), 200
+            state.save()
+            return jsonify(state.to_dict()), 200
     except Exception:
         # will throw an exception if the data passed is not a valid
         # json object
-        return jsonify({"error": "Not a JSON"}), 400
+        abort(400, "Not a JSON")

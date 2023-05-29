@@ -36,6 +36,7 @@ def get_city(city_id: str):
         abort(404)
     return jsonify(city.to_dict()), 200
 
+
 @app_views.route("/cities/<string:city_id>", strict_slashes=False,
                  methods=["DELETE"])
 def delete_city(city_id: str):
@@ -63,6 +64,7 @@ def delete_city(city_id: str):
     city.delete()
     storage.save()
     return jsonify({}), 200
+
 
 @app_views.route("/cities/<string:city_id>", strict_slashes=False,
                  methods=["PUT"])
@@ -93,7 +95,7 @@ def update_city(city_id: str):
         abort(404)
     data = request.get_json()
     if data is None:
-        return jsonify({"error": "Not a JSON"}) 400
+        return jsonify({"error": "Not a JSON"}), 400
     for k, v in data.items():
         if k in ignore:
             continue

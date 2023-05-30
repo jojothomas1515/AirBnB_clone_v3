@@ -23,7 +23,7 @@ def users():
         for check in check_list:
             if not data.get(check, None):
                 response = jsonify({"error": "Missing {}".format(check)})
-                return make_response(response, 404)
+                return make_response(response, 400)
         email = data.get("email")
         password = data.get("password")
         user = User(email=email, password=password)

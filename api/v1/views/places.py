@@ -37,7 +37,7 @@ def places(city_id):
         for check in check_list:
             if not data.get(check, None):
                 response = jsonify({"error": "Missing {}".format(check)})
-                return make_response(response, 404)
+                return make_response(response, 400)
         user_id = data.get("user_id")
         name = data.get("password")
         user = storage.get(User, user_id)

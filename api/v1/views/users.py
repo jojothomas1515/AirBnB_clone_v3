@@ -9,7 +9,8 @@ from models import storage
 from models.user import User
 
 
-@app_views.route('/users', methods=["GET", "POST"])
+@app_views.route('/users', strict_slashes=False,
+                 methods=["GET", "POST"])
 def users():
     """User routes for getting all users and creating a new one"""
     if request.method == "POST":
@@ -35,7 +36,8 @@ def users():
     return make_response(response, 200)
 
 
-@app_views.route("/users/<user_id>", methods=["GET", "PUT", "DELETE"])
+@app_views.route("/users/<user_id>", strict_slashes=False,
+                 methods=["GET", "PUT", "DELETE"])
 def user(user_id):
     """User route to retrieve, update or delete a user."""
     user = storage.get(User, user_id)

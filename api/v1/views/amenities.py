@@ -109,7 +109,7 @@ def update_amenity(amenity_id: str):
     ignore = ['id', 'created_at', 'updated_at']
     data = request.get_json(silent=True)
     if not data:
-        jsonify(error="Not a JSON"), 400
+        return jsonify(error="Not a JSON"), 400
     for k, v in data.items():
         if k in ignore:
             continue

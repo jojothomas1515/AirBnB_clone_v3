@@ -12,7 +12,8 @@ from models.user import User
 from werkzeug.exceptions import NotFound
 
 
-@app_views.route('/places/<place_id>/reviews', methods=["GET", "POST"])
+@app_views.route('/places/<place_id>/reviews', strict_slashes=False,
+                 methods=["GET", "POST"])
 def reviews(place_id):
     """Review routes for getting all reviews and creating a new one"""
     print("Request recieved")
@@ -45,7 +46,8 @@ def reviews(place_id):
     return make_response(response, 200)
 
 
-@app_views.route("/reviews/<review_id>", methods=["GET", "PUT", "DELETE"])
+@app_views.route("/reviews/<review_id>", strict_slashes=False,
+                 methods=["GET", "PUT", "DELETE"])
 def review(review_id):
     """Review route to retrieve, update or delete a review."""
     review = storage.get(Review, review_id)

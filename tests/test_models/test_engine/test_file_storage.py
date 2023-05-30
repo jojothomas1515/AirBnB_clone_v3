@@ -137,7 +137,8 @@ class FileStorageTestsNew(unittest.TestCase):
             import shutil
             shutil.move('file.json.bk', 'file.json')
         else:
-            os.remove('file.json')
+            if os.path.isfile('file.json'):
+                os.remove('file.json')
         FileStorage._FileStorage__objects = {}
         models.storage.reload()
 

@@ -39,7 +39,7 @@ def places(city_id):
                 response = jsonify({"error": "Missing {}".format(check)})
                 return make_response(response, 400)
         user_id = data.get("user_id")
-        name = data.get("password")
+        name = data.get("name")
         user = storage.get(User, user_id)
         if not user:
             return abort(404)

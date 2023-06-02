@@ -29,7 +29,7 @@ def place_amenity(place_id: str):
         return jsonify(amenities), 200
 
 
-@app_views.route("/api/v1/places/<place_id>/amenities/<amenity_id>",
+@app_views.route("/places/<place_id>/amenities/<amenity_id>",
                  strict_slashes=True, methods=["POST"])
 def add_place_amenity(place_id: str, amenity_id: str):
     """Adds an amenity to place."""
@@ -37,7 +37,6 @@ def add_place_amenity(place_id: str, amenity_id: str):
     place = storage.get(Place, place_id)
     amenity = storage.get(Amenity, amenity_id)
 
-    print("reached")
     if place is None or amenity is None:
         abort(404)
 
@@ -55,7 +54,7 @@ def add_place_amenity(place_id: str, amenity_id: str):
         return jsonify(amenity.to_dict()), 201
 
 
-@app_views.route("/api/v1/places/<place_id>/amenities/<amenity_id>",
+@app_views.route("/places/<place_id>/amenities/<amenity_id>",
                  strict_slashes=True, methods=["DELETE"])
 def delete_place_amenity(place_id: str, amenity_id: str):
     """Delete an amenity from place."""
@@ -65,7 +64,6 @@ def delete_place_amenity(place_id: str, amenity_id: str):
     if place is None or amenity is None:
         abort(404)
 
-    print("reached")
     if storage_t == 'db':
         if amenity not in place.amenities:
             abort(404)

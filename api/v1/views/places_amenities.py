@@ -34,7 +34,7 @@ def place_amenity(place_id: str):
 def add_place_amenity(place_id: str, amenity_id: str):
     """Adds an amenity to place."""
 
-    place: Place = storage.get(Place, place_id)
+    place = storage.get(Place, place_id)
     amenity = storage.get(Amenity, amenity_id)
 
     print("reached")
@@ -59,7 +59,7 @@ def add_place_amenity(place_id: str, amenity_id: str):
                  strict_slashes=True, methods=["DELETE"])
 def delete_place_amenity(place_id: str, amenity_id: str):
     """Delete an amenity from place."""
-    place: Place = storage.get(Place, place_id)
+    place = storage.get(Place, place_id)
     amenity = storage.get(Amenity, amenity_id)
 
     if place is None or amenity is None:

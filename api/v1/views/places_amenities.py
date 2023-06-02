@@ -9,7 +9,8 @@ from models.place import Place
 from models.amenity import Amenity
 
 
-@app_views.route("/places/<place_id>/amenities", strict_slashes=True, methods=["GET"])
+@app_views.route("/places/<place_id>/amenities",
+                 strict_slashes=True, methods=["GET"])
 def place_amenity(place_id: str):
     """Get all the amenities associated with a place."""
 
@@ -24,8 +25,9 @@ def place_amenity(place_id: str):
         return jsonify(amenities), 200
     else:
         amenity_ids = place.amenity_ids
-        amenities = list(map(lambda a_id: storage.get(Amenity, a_id).to_dict(),
-                             amenity_ids))
+        amenities = list(
+            map(lambda a_id: storage.get(Amenity, a_id).to_dict(),
+                amenity_ids))
         return jsonify(amenities), 200
 
 
